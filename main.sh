@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Ensure script exits if any command fails
 set -e
 
-# --- Function to get all PostgreSQL IPs ---
-# --- Function to get all PostgreSQL IPs ---
 get_postgres_ips() {
     local regions=("eu-west-1" "eu-west-3")
     local all_ips_collected=()
@@ -38,7 +35,6 @@ get_postgres_ips() {
     echo "${all_ips_collected[@]}"
 }
 
-# --- Main script execution ---
 
 echo "Starting Ansible inventory generation..."
 
@@ -51,10 +47,7 @@ name=`aws ec2 describe-instances \
     --instance-ids ${INSTANCE_ID} \
     --query "Reservations[].Instances[].Tags[?Key=='Name'].Value" \
     --output text`
-# Use a default name if the tag is not found
-if [ -z "$name" ]; then
-    name="local_control_node"
-fi
+
 
 echo "Getting region for local instance..."
 instance_az=$(aws ec2 describe-instances \
@@ -88,7 +81,7 @@ fi
 
 
 # Create an Ansible inventory file
-inventory_file="inventory.yml"
+inventory_file="ansible/inventory.yml"
 
 # Create the inventory file using a here-document
 cat <<EOF > "${inventory_file}"
