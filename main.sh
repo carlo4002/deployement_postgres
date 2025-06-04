@@ -61,7 +61,7 @@ ips=$(get_ips)
 array=($(echo "$input" | tr -d '.' | tr -s ' '))
 
 # Create an Ansible inventory file with the instance name and region
-inventory_file="inventory.in"
+inventory_file="inventory.yml"
 
 # Create the inventory file using a here-document
 cat <<EOF > "${inventory_file}"

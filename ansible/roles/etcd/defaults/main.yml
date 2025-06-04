@@ -11,7 +11,7 @@ etcd_data_dir_mode: '0700'
 etcd_listen_peer_urls: 'http://{{ ansible_ec2_local_ipv4 }}:2380'
 etcd_initial_advertise_peer_urls: 'http://{{ ansible_ec2_local_ipv4 }}:2380'
 etcd_initial_cluster_token: etcd-cluster-1
-#etcd_initial_cluster: "{{ groups['etcd'] | map('extract', hostvars, 'ansible_ec2_local_ipv4') | join(',') }}"
+etcd_initial_cluster: "{{ groups['etcd'] | map('extract', hostvars, 'ansible_ec2_local_ipv4') | join(',') }}"
 etcd_initial_cluster_state: new
 etcd_owner_uid: 1000
 etcd_owner_gid: 1000
