@@ -1,66 +1,93 @@
-#! /usr/bin/sh
+#!/bin/bash
 
-# get tags
-#exec &> /tmp/main.log
+# Ensure script exits if any command fails
+set -e
 
-get_ips() {
-  # Define the regions you want to query
-  regions=("eu-west-1" "eu-west-3")
+# --- Function to get all PostgreSQL IPs ---
+# --- Function to get all PostgreSQL IPs ---
+get_postgres_ips() {
+    local regions=("eu-west-1" "eu-west-3")
+    local all_ips_collected=()
 
-  # Initialize an empty array to hold all found IPs
-  all_ips=()
+    echo "Fetching private IPs for PostgreSQL instances in specified regions..." >&2
 
-  # Loop through each region
-  for region in "${regions[@]}"; do
-  # Run the describe-instances command for the current region
-  # and capture the IPs
-    ips_in_region=$(aws ec2 describe-instances \
-      --region "$region" \
-      --filters "Name=tag:Application,Values=postgres" \
-              "Name=instance-state-name,Values=running" \
-      --query 'Reservations[].Instances[].PrivateIpAddress' \
-      --output text)
+    for region in "${regions[@]}"; do
+        echo "Querying region: $region" >&2
 
-  # If IPs were found, add them to the all_ips array
-    if [ -n "$ips_in_region" ]; then
-      # The output text might have newlines, so we use readarray to handle them
-      readarray -t current_region_ips <<< "$ips_in_region"
-      all_ips+=("${current_region_ips[@]}")
-    fi
-  done
+        # Capture raw output from AWS CLI
+        raw_ips_output=$(aws ec2 describe-instances \
+            --region "$region" \
+            --filters "Name=tag:application,Values=postgres" \
+                      "Name=instance-state-name,Values=running" \
+            --query 'Reservations[].Instances[].PrivateIpAddress' \
+            --output text)
 
-  # Echo all collected IPs on a single line, separated by spaces
-  echo "${all_ips[@]}"
+        # Process raw_ips_output to ensure each IP is on its own line
+        # This handles cases where aws cli might output multiple IPs on one line
+        # and also trims any leading/trailing whitespace
+        cleaned_ips=$(echo "$raw_ips_output" | xargs -n 1)
+
+        if [ -n "$cleaned_ips" ]; then
+            # Read each cleaned IP into the array
+            readarray -t current_region_ips <<< "$cleaned_ips"
+            all_ips_collected+=("${current_region_ips[@]}")
+        fi
+    done
+
+    # Output the collected IPs, space-separated, ready for the next step of formatting
+    echo "${all_ips_collected[@]}"
 }
 
+# --- Main script execution ---
+
+echo "Starting Ansible inventory generation..."
+
+# Get metadata about the current instance (where the script is running)
 TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
 INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
 
-echo "getiing tags"
+echo "Getting tags for local instance..."
 name=`aws ec2 describe-instances \
     --instance-ids ${INSTANCE_ID} \
     --query "Reservations[].Instances[].Tags[?Key=='Name'].Value" \
     --output text`
-echo "getting region"
-instance_az=$(aws ec2 describe-instances \
-  --instance-ids "$INSTANCE_ID" \
-  --query 'Reservations[0].Instances[0].Placement.AvailabilityZone' \
-  --output text)
-if [ -z "$instance_az" ]; then
-  echo "Error: Instance ID '$instance_id' not found or no Availability Zone available."
-  exit 1
+# Use a default name if the tag is not found
+if [ -z "$name" ]; then
+    name="local_control_node"
 fi
 
-aws_region=$(echo "$instance_az" | awk '{print substr($1, 1, length($1)-1)}')
+echo "Getting region for local instance..."
+instance_az=$(aws ec2 describe-instances \
+    --instance-ids "$INSTANCE_ID" \
+    --query 'Reservations[0].Instances[0].Placement.AvailabilityZone' \
+    --output text)
 
-echo "getting region: $aws_region"
+aws_region="" # Initialize variable
+if [ -z "$instance_az" ]; then
+    echo "Warning: Could not determine Availability Zone for instance ID '$INSTANCE_ID'. Region variable will be empty." >&2
+else
+    aws_region=$(echo "$instance_az" | awk '{print substr($1, 1, length($1)-1)}')
+fi
+echo "Local instance region: ${aws_region}"
 
-echo "getting ips"
-ips=$(get_ips)
 
-array=($(echo "$input" | tr -d '.' | tr -s ' '))
+echo "Collecting PostgreSQL instance IPs..."
+# Call the function to get all postgres IPs
+postgres_ips_list=$(get_postgres_ips)
 
-# Create an Ansible inventory file with the instance name and region
+# Convert the space-separated string of IPs into a YAML list format for the inventory
+# This uses printf to ensure each IP is on its own line and prefixed with '- ' for YAML list syntax
+formatted_postgres_ips=""
+if [ -n "$postgres_ips_list" ]; then
+  # Replace spaces with newlines and then prefix each line with '- '
+  formatted_postgres_ips=$(echo "$postgres_ips_list" | tr ' ' '\n' | sed 's/^/            - /')
+else
+  # If no IPs are found, ensure the list is empty or just a comment
+  formatted_postgres_ips="      # No PostgreSQL IPs found"
+fi
+
+
+# Create an Ansible inventory file
 inventory_file="inventory.yml"
 
 # Create the inventory file using a here-document
@@ -69,11 +96,18 @@ all:
   hosts:
     localhost:
       ansible_connection: local
-      node_name: ${name}
-      aws_region: ${aws_region}
-      ips:
-        - ${ips_array}
+      # Variables for the localhost (control node itself)
+      node_name: "${name}"
+      aws_region: "${aws_region}"
+      # List of PostgreSQL instance IPs gathered from AWS
+      postgres_ips:
+${formatted_postgres_ips}
 EOF
 
-
-echo "Inventory file created: ${inventory_file}"
+echo "---"
+echo "Ansible inventory file '${inventory_file}' created successfully."
+echo "---"
+echo "Generated Inventory:"
+echo "---"
+cat "${inventory_file}"
+echo "---"
