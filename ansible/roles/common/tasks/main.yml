@@ -1,0 +1,15 @@
+---
+- name: Ensure the postgres user exists
+  user:
+    name: postgres
+    state: present
+    shell: /bin/bash
+    create_home: yes
+
+- name: Ensure postgres user has correct permissions
+  file:
+    path: /var/lib/postgresql
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0700'

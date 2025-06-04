@@ -1,0 +1,39 @@
+scope: {{ patroni_scope }}
+namespace: {{ patroni_namespace }}
+name: {{ inventory_hostname }}
+
+restapi:
+  listen: {{ patroni_restapi_listen }}
+  connect_address: {{ patroni_restapi_connect_address }}
+
+etcd:
+  host: {{ patroni_etcd_host }}
+
+bootstrap:
+  dcs:
+    ttl: {{ patroni_ttl }}
+    loop_wait: {{ patroni_loop_wait }}
+    retry_timeout: {{ patroni_retry_timeout }}
+    maximum_lag_on_failover: {{ patroni_maximum_lag_on_failover }}
+    postgresql:
+      use_pg_rewind: {{ patroni_use_pg_rewind }}
+      parameters:
+        max_connections: {{ patroni_postgres_max_connections }}
+        shared_buffers: {{ patroni_postgres_shared_buffers }}
+        logging_collector: {{ patroni_postgres_logging_collector }}
+  initdb:
+  - encoding: {{ patroni_initdb_encoding }}
+  - data-checksums: {{ patroni_initdb_data_checksums }}
+
+postgresql:
+  listen: {{ patroni_postgres_listen }}
+  connect_address: {{ patroni_postgres_connect_address }}
+  data_dir: {{ patroni_postgres_data_dir }}
+  bin_dir: {{ patroni_postgres_bin_dir }}
+  authentication:
+    replication:
+      username: {{ patroni_replication_username }}
+      password: {{ patroni_replication_password }}
+    superuser:
+      username: {{ patroni_superuser_username }}
+      password: {{ patroni_superuser_password }}

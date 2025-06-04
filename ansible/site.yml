@@ -1,0 +1,9 @@
+---
+- name: Start PostgreSQL, Patroni, and etcd setup
+  # This playbook sets up PostgreSQL, Patroni, and etcd on all hosts.
+  hosts: all
+  roles:
+    - common
+    - etcd
+    - postgres
+    - patroni

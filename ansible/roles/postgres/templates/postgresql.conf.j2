@@ -1,0 +1,9 @@
+# PostgreSQL configuration file
+# ...add your PostgreSQL configuration settings here...
+listen_addresses = '{{ postgres_listen_addresses }}'
+port = {{ postgres_port }}
+max_connections = {{ postgres_max_connections }}
+shared_buffers = {{ postgres_shared_buffers }}
+logging_collector = {{ postgres_logging_collector }}
+log_directory = '{{ postgres_log_directory }}'
+log_filename = '{{ postgres_log_filename }}'

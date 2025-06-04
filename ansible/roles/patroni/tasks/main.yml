@@ -1,0 +1,20 @@
+---
+- name: Install Patroni
+  apt:
+    name: patroni
+    state: present
+    update_cache: yes
+
+- name: Ensure Patroni service is started
+  service:
+    name: patroni
+    state: started
+    enabled: yes
+
+- name: Copy Patroni configuration template
+  template:
+    src: templates/patroni.yml.j2
+    dest: /etc/patroni.yml
+    owner: patroni
+    group: patroni
+    mode: '0644'

@@ -1,0 +1,23 @@
+patroni_scope: 'postgres'
+patroni_namespace: '/service/'
+patroni_restapi_listen: '0.0.0.0:8008'
+patroni_restapi_connect_address: '{{ ansible_default_ipv4.address }}:8008'
+patroni_etcd_host: '127.0.0.1:2379'
+patroni_ttl: 30
+patroni_loop_wait: 10
+patroni_retry_timeout: 10
+patroni_maximum_lag_on_failover: 1048576
+patroni_use_pg_rewind: true
+patroni_postgres_max_connections: 200
+patroni_postgres_shared_buffers: '256MB'
+patroni_postgres_logging_collector: 'on'
+patroni_initdb_encoding: 'UTF8'
+patroni_initdb_data_checksums: true
+patroni_postgres_listen: '0.0.0.0:5432'
+patroni_postgres_connect_address: '{{ ansible_default_ipv4.address }}:5432'
+patroni_postgres_data_dir: '/var/lib/postgresql/data'
+patroni_postgres_bin_dir: '/usr/lib/postgresql/13/bin'
+patroni_replication_username: 'replicator'
+patroni_replication_password: 'replicator_password'
+patroni_superuser_username: 'postgres'
+patroni_superuser_password: 'postgres_password'

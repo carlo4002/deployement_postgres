@@ -1,0 +1,5 @@
+# etcd configuration file
+name: etcd-node
+data-dir: /var/lib/etcd
+listen-client-urls: {{ etcd_listen_client_urls }}
+advertise-client-urls: {{ etcd_advertise_client_urls }}

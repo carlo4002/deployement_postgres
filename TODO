@@ -38,3 +38,8 @@
 
 
 Important Notes:
+- Open port
+Patroni REST API: 8008/tcp (for Patroni's health checks and management)
+Etcd Client: 2379/tcp
+Etcd Peer: 2380/tcp
+SSH: 22/tcp (for management)
