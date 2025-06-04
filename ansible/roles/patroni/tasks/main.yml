@@ -30,8 +30,7 @@
 - name: Reload systemd daemon
   command: systemctl daemon-reload
 
-- name: Enable and start Patroni service
+- name: Stop Patroni service after installation
   service:
     name: patroni
-    state: started
-    enabled: yes
+    state: stopped

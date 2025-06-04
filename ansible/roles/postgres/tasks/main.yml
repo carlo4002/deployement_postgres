@@ -26,3 +26,8 @@
     owner: postgres
     group: postgres
     mode: '0644'
+
+- name: Stop PostgreSQL service after installation
+  service:
+    name: postgresql
+    state: stopped
