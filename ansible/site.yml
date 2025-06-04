@@ -2,6 +2,13 @@
 - name: Start PostgreSQL, Patroni, and etcd setup
   # This playbook sets up PostgreSQL, Patroni, and etcd on all hosts.
   hosts: all
+  gather_facts: true
+  tasks:
+    - name: Gather EC2 facts
+      amazon.aws.ec2_instance_facts:
+        region: "{{ aws_region }}"
+      register: ec2_facts
+
   roles:
     - common
     - etcd
