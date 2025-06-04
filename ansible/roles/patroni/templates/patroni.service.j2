@@ -1,0 +1,14 @@
+[Unit]
+Description=Patroni Service
+After=network.target
+
+[Service]
+User=postgres
+Group=postgres
+Environment="PATRONI_CONFIG_FILE=/etc/patroni.yml"
+ExecStart=/usr/bin/patroni $PATRONI_CONFIG_FILE
+Restart=always
+LimitNOFILE=1024
+
+[Install]
+WantedBy=multi-user.target

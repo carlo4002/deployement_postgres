@@ -11,6 +11,14 @@
     state: started
     enabled: yes
 
+- name: Ensure PostgreSQL data directory exists
+  file:
+    state: directory
+    path: '/var/lib/postgresql/data'
+    owner: postgres
+    group: postgres
+    mode: '0700'
+
 - name: Copy PostgreSQL configuration template
   template:
     src: templates/postgresql.conf.j2

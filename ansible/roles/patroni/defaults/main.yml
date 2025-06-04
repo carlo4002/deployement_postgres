@@ -1,8 +1,8 @@
-patroni_scope: 'postgres'
+patroni_scope: 'postgres_cluster'
 patroni_namespace: '/service/'
-patroni_restapi_listen: '0.0.0.0:8008'
-patroni_restapi_connect_address: '{{ ansible_default_ipv4.address }}:8008'
-patroni_etcd_host: '127.0.0.1:2379'
+patroni_restapi_listen: '{{ ansible_ec2_local_ipv4 }}:8008'
+patroni_restapi_connect_address: '{{ ansible_ec2_local_ipv4 }}:8008'
+patroni_etcd_host: '{{postgres_ips}}'
 patroni_ttl: 30
 patroni_loop_wait: 10
 patroni_retry_timeout: 10

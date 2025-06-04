@@ -1,6 +1,6 @@
 scope: {{ patroni_scope }}
 namespace: {{ patroni_namespace }}
-name: {{ inventory_hostname }}
+name: {{ node_name }}
 
 restapi:
   listen: {{ patroni_restapi_listen }}
@@ -15,15 +15,25 @@ bootstrap:
     loop_wait: {{ patroni_loop_wait }}
     retry_timeout: {{ patroni_retry_timeout }}
     maximum_lag_on_failover: {{ patroni_maximum_lag_on_failover }}
-    postgresql:
-      use_pg_rewind: {{ patroni_use_pg_rewind }}
-      parameters:
-        max_connections: {{ patroni_postgres_max_connections }}
-        shared_buffers: {{ patroni_postgres_shared_buffers }}
-        logging_collector: {{ patroni_postgres_logging_collector }}
+    
+  pg_hba:
+    - host all all 0.0.0.0/0 md5 # Allow all connections with md5 authentication
+    - host replication replicator 10.12.0.0/16 md5 # Allow replication 
+    - host replication replicator 10.11.0.0/16 md5 # Allow replication from a specific subnet
+
   initdb:
-  - encoding: {{ patroni_initdb_encoding }}
-  - data-checksums: {{ patroni_initdb_data_checksums }}
+    - encoding: {{ patroni_initdb_encoding }}
+    - data-checksums: {{ patroni_initdb_data_checksums }}
+  users:
+    admin:
+      password: {{patroni_superuser_password}} # Patroni's superuser password
+      options:
+        - createrole
+        - createdb
+    replicator:
+      password: {{ patroni_replication_password }} # Password for replication user
+      options:
+        - replication
 
 postgresql:
   listen: {{ patroni_postgres_listen }}
@@ -37,3 +47,12 @@ postgresql:
     superuser:
       username: {{ patroni_superuser_username }}
       password: {{ patroni_superuser_password }}
+  parameters:
+    wal_level: replica
+    max_wal_senders: 10
+    max_replication_slots: 10
+    hot_standby: 'on'
+    shared_buffers: 128MB 
+    effective_cache_size: 250MB # Adjust based on your server's RAM
+    listen_addresses: {{ ansible_default_ipv4.address }}
+    port: 5432
