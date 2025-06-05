@@ -105,7 +105,7 @@ echo "---"
 cat "${inventory_file}"
 echo "---"
 
-cd "${inventory_file}"
+cd ansible/
 echo "Running Ansible playbook..."
 echo "---"
 echo "Ansible playbook output will be logged to /tmp/ansible.log"
