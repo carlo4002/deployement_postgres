@@ -5,4 +5,10 @@
   dnf:
     name: postgresql15-server.x86_64
     state: present
-    
+
+  
+- name: Ensure PostgreSQL service is enabled and started
+  service:
+    name: postgresql-15
+    state: started
+    enabled: yes
