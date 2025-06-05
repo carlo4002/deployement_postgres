@@ -8,3 +8,7 @@
   service:
     name: patroni
     state: restarted
+
+- name: Clean DNF metadata
+  ansible.builtin.command: dnf clean all
+  become: true
