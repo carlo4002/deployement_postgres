@@ -41,7 +41,7 @@
       After=network.target
 
       [Service]
-      ExecStart=/usr/local/bin/etcd
+      ExecStart=/usr/local/bin/etcd --config-file={{etcd_config_file}}
       Restart=always
       RestartSec=5s
       LimitNOFILE=40000

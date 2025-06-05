@@ -7,7 +7,8 @@ etcd_listen_client_urls: 'http://{{ ansible_ec2_local_ipv4 }}:2379,http://127.0.
 etcd_advertise_client_urls: 'http://{{ ansible_ec2_local_ipv4 }}:2379'
 etcd_owner: etcd
 etcd_group: etcd
-etcd_config_path: /etc/etcd/etcd.conf.yml
+etcd_config_path: /etc/etcd/
+etcd_config_file: "{{ etcd_config_path }}/etcd.conf.yml"
 etcd_config_mode: '0644'
 etcd_data_dir_mode: '0700'
 
@@ -23,3 +24,21 @@ etcd_owner_uid: 1000
 etcd_owner_gid: 1000
 etcd_service_name: etcd
 etcd_service_state: started
+
+
+etcd_service_content: |
+      [Unit]
+      Description=etcd key-value store
+      Documentation=https://github.com/etcd-io/etcd
+      After=network.target
+
+      [Service]
+      ExecStart=/usr/local/bin/etcd --config-file={{etcd_config_file}}
+      Restart=always
+      RestartSec=5s
+      LimitNOFILE=40000
+      User=etcd
+      Group=etcd
+
+      [Install]
+      WantedBy=multi-user.target
