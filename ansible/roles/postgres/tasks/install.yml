@@ -1,26 +1,63 @@
-- name: Create dummy /etc/redhat-release file for PostgreSQL repo compatibility
+- name: Create dummy /etc/redhat-release file for PGDG compatibility
   ansible.builtin.copy:
     dest: /etc/redhat-release
     content: "Red Hat Enterprise Linux release 8.0 (Ootpa)\n"
     mode: '0644'
   become: true
 
-- name: Download PGDG repo RPM to /tmp
+- name: Download PGDG repo RPM
   ansible.builtin.get_url:
     url: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     dest: /tmp/pgdg-redhat-repo.rpm
     mode: '0644'
   become: true
 
-- name: Install PGDG repo RPM using rpm (bypassing dependency check)
+- name: Install PGDG repo RPM (skip deps)
   ansible.builtin.command:
     cmd: rpm -i --nodeps /tmp/pgdg-redhat-repo.rpm
   args:
     creates: /etc/yum.repos.d/pgdg-redhat-all.repo
   become: true
 
+- name: Patch PGDG repo to use releasever=8
+  ansible.builtin.lineinfile:
+    path: /etc/yum.repos.d/pgdg-redhat-all.repo
+    regexp: '^releasever='
+    line: 'releasever=8'
+    insertafter: '^\[pgdg.*\]'
+    state: present
+  become: true
+  notify: Clean DNF metadata
+
 - name: Remove dummy /etc/redhat-release
   ansible.builtin.file:
     path: /etc/redhat-release
     state: absent
   become: true
+
+- name: Disable default PostgreSQL module
+  ansible.builtin.command: dnf -qy module disable postgresql
+  become: true
+
+- name: Install PostgreSQL 14
+  ansible.builtin.yum:
+    name:
+      - postgresql14
+      - postgresql14-server
+    state: present
+  become: true
+
+- name: Initialize PostgreSQL 14 database
+  ansible.builtin.command:
+    cmd: /usr/pgsql-14/bin/postgresql-14-setup initdb
+  args:
+    creates: /var/lib/pgsql/14/data/PG_VERSION
+  become: true
+
+- name: Enable and start PostgreSQL 14 service
+  ansible.builtin.systemd:
+    name: postgresql-14
+    enabled: true
+    state: started
+  become: true
+
