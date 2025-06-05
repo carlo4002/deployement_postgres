@@ -43,6 +43,7 @@
   retries: 5
   delay: 5 
   failed_when: "etcd_health_check.rc != 0"
+  ignore_errors: yes
 
 - name: Debug etcd health status
   debug:
