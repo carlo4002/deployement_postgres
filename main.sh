@@ -2,6 +2,35 @@
 
 set -e
 
+get_ips_etcd() {
+    local regions=("eu-west-1" "eu-west-3")
+    local all_entries=()
+
+    echo "Fetching private IPs for PostgreSQL instances in specified regions..." >&2
+    for region in "${regions[@]}"; do
+        echo "Querying region: $region" >&2
+
+        raw=$(aws ec2 describe-instances \
+            --region "$region" \
+            --filters "Name=tag:application,Values=postgres" "Name=instance-state-name,Values=running" \
+            --query 'Reservations[].Instances[].{IP: PrivateIpAddress, Tags: Tags}' \
+            --output json)
+
+        while read -r line; do
+            all_entries+=("$line")
+        done < <(echo "$raw" | jq -r '
+            .[] |
+            {
+              ip: .IP,
+              tags: (reduce .Tags[] as $t ({}; .[$t.Key] = $t.Value))
+            } |
+            "- { name: \(.tags.Name), ip: \(.ip), etcd_node: \(.tags.etcd // "unknown") }"
+        ')
+    done
+
+    printf "%s\n" "${all_entries[@]}"
+}
+
 get_postgres_ips() {
     local regions=("eu-west-1" "eu-west-3")
     local all_ips_collected=()
@@ -71,7 +100,8 @@ echo "Local instance region: ${aws_region}"
 
 echo "Collecting PostgreSQL instance IPs..."
 # Call the function to get all postgres IPs
-postgres_ips_list=$(get_postgres_ips)
+#
+data_collected=$(get_ips_etcd)
 
 # Convert the space-separated string of IPs into a YAML list format for the inventory
 # This uses printf to ensure each IP is on its own line and prefixed with '- ' for YAML list syntax
@@ -100,7 +130,7 @@ all:
       etcd_node: "${node_etcd}"
       # List of PostgreSQL instance IPs gathered from AWS
       postgres_ips:
-${formatted_postgres_ips}
+$(echo "${data_collected}" | sed 's/^/        /')
 EOF
 
 echo "---"
@@ -116,7 +146,7 @@ echo "Running Ansible playbook..."
 echo "---"
 echo "Ansible playbook output will be logged to /tmp/ansible.log"
 
-ansible-playbook -i inventory.yml site.yml > /tmp/ansible.log 2>&1
+#ansible-playbook -i inventory.yml site.yml > /tmp/ansible.log 2>&1
 
 if [ $? -eq 0 ]; then
     echo "Ansible playbook executed successfully."
