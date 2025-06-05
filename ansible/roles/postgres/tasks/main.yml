@@ -1,8 +1,4 @@
 ---
-- name: Install PostgreSQL
-  ansible.builtin.include_tasks:
-    file: install.yml
-
 
 - name: Ensure PostgreSQL data directory exists
   file:
@@ -11,6 +7,28 @@
     owner: postgres
     group: postgres
     mode: '0700'
+
+- name: Ensure the postgres user exists
+  user:
+    name: postgres
+    state: present
+    shell: /bin/bash
+    create_home: yes
+
+- name: Ensure PostgreSQL config directory exists
+  file:
+    state: directory
+    path: '/etc/postgresql/'
+    owner: postgres
+    group: postgres
+    mode: '0700'
+
+
+- name: Install PostgreSQL
+  ansible.builtin.include_tasks:
+    file: install.yml
+
+
 
 - name: Copy PostgreSQL configuration template
   template:
