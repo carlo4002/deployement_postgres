@@ -14,7 +14,7 @@
 - name: Copy Patroni configuration template
   template:
     src: templates/patroni.yml.j2
-    dest: /etc/patroni.yml
+    dest: "{{patroni_coonfig_dir}}/patroni.yml"
     owner: postgres
     group: postgres
     mode: '0644'

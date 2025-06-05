@@ -14,6 +14,14 @@
     name: patroni
     executable: pip3
 
+- name: Ensure patroni config directory exists
+  file: 
+    path: "{{ patroni_config_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0755'
+
 - name: Create systemd unit file for Patroni
   copy:
     dest: /etc/systemd/system/patroni.service
