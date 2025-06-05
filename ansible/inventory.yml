@@ -3,10 +3,10 @@ all:
     localhost:
       ansible_connection: local
       # Variables for the localhost (control node itself)
-      node_name: "postgres-secondary-1"
-      aws_region: "eu-west-1"
+      node_name: "postgres-primary-1"
+      aws_region: "eu-west-3"
       # List of PostgreSQL instance IPs gathered from AWS
       postgres_ips:
-            - 10.12.1.92
-            - 10.11.1.158
-            - 10.11.2.213
+            - 10.12.1.160
+            - 10.11.1.195
+            - 10.11.2.227
