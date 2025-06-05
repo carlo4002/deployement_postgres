@@ -25,7 +25,7 @@
       [Service]
       Type=simple
       User=postgres
-      ExecStart=/usr/local/bin/patroni /etc/patroni/config.yml
+      ExecStart=/usr/local/bin/patroni /etc/patroni.yml
       Restart=on-failure
 
       [Install]
