@@ -48,6 +48,11 @@ name=`aws ec2 describe-instances \
     --query "Reservations[].Instances[].Tags[?Key=='Name'].Value" \
     --output text`
 
+node_etcd=`aws ec2 describe-instances \
+    --instance-ids ${INSTANCE_ID} \
+    --query "Reservations[].Instances[].Tags[?Key=='etcd'].Value" \
+    --output text`
+
 
 echo "Getting region for local instance..."
 instance_az=$(aws ec2 describe-instances \
@@ -92,6 +97,7 @@ all:
       # Variables for the localhost (control node itself)
       node_name: "${name}"
       aws_region: "${aws_region}"
+      etcd_node: "${node_etcd}"
       # List of PostgreSQL instance IPs gathered from AWS
       postgres_ips:
 ${formatted_postgres_ips}
