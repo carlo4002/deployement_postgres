@@ -146,7 +146,7 @@ echo "Running Ansible playbook..."
 echo "---"
 echo "Ansible playbook output will be logged to /tmp/ansible.log"
 
-#ansible-playbook -i inventory.yml site.yml > /tmp/ansible.log 2>&1
+ansible-playbook -i inventory.yml site.yml > /tmp/ansible.log 2>&1
 
 if [ $? -eq 0 ]; then
     echo "Ansible playbook executed successfully."
