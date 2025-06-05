@@ -1,40 +1,35 @@
 ---
-- name: Install dependencies for building etcd
-  yum:
-    name:
-      - git
-      - golang
-      - make
-    state: present
-    
-- name: Clone etcd repository
-  git:
-    repo: https://github.com/etcd-io/etcd.git
-    dest: /opt/etcd
-    version: v3.5.21
+- name: Define etcd version
+  set_fact:
+    etcd_version: "v3.5.14"
 
-- name: Build etcd binaries
-  command: ./build.sh
-  args:
-    chdir: /opt/etcd
-  when: ansible_distribution == "Amazon"
+- name: Download etcd release tarball
+  get_url:
+    url: "https://github.com/etcd-io/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/etcd.tar.gz"
+    mode: '0644'
 
-- name: Add etcd binaries to PATH
-  lineinfile:
-    path: /etc/profile.d/etcd.sh
-    line: 'export PATH="$PATH:/opt/etcd/bin"'
-    create: yes
-    state: present
-  notify: Refresh environment
+- name: Extract etcd archive
+  unarchive:
+    src: "/tmp/etcd.tar.gz"
+    dest: "/opt/"
+    remote_src: yes
+
+- name: Move etcd binaries to /usr/local/bin
+  copy:
+    remote_src: yes
+    src: "/opt/etcd-{{ etcd_version }}-linux-amd64/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: '0755'
+  loop:
+    - etcd
+    - etcdctl
 
 - name: Verify etcd installation
-  shell: |
-    source /etc/profile.d/etcd.sh
-    etcd --version
-  register: etcd_version
+  command: etcd --version
+  register: etcd_version_output
   changed_when: false
-  failed_when: "'etcd Version' not in etcd_version.stdout"
 
-- name: Print etcd version
+- name: Show etcd version
   debug:
-    msg: "{{ etcd_version.stdout }}"
+    msg: "{{ etcd_version_output.stdout_lines }}"
