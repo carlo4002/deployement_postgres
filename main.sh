@@ -106,4 +106,16 @@ cat "${inventory_file}"
 echo "---"
 
 cd "${inventory_file}"
-ansible-playbook -i inventory.yml site.yml
+echo "Running Ansible playbook..."
+echo "---"
+echo "Ansible playbook output will be logged to /tmp/ansible.log"
+
+ansible-playbook -i inventory.yml site.yml > /tmp/ansible.log 2>&1
+
+if [ $? -eq 0 ]; then
+    echo "Ansible playbook executed successfully."
+else
+    echo "Ansible playbook execution failed. Check /tmp/ansible.log for details."
+fi
+echo "---"
+echo "Ansible playbook execution completed."
