@@ -1,5 +1,3 @@
----
-
 - name: Create dummy /etc/redhat-release file for PostgreSQL repo compatibility
   ansible.builtin.copy:
     dest: /etc/redhat-release
@@ -7,54 +5,22 @@
     mode: '0644'
   become: true
 
-- name: Sync filesystem to ensure /etc/redhat-release is written
+- name: Download PGDG repo RPM to /tmp
+  ansible.builtin.get_url:
+    url: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    dest: /tmp/pgdg-redhat-repo.rpm
+    mode: '0644'
+  become: true
+
+- name: Install PGDG repo RPM using rpm (bypassing dependency check)
   ansible.builtin.command:
-    cmd: sync
-  become: true
-
-- name: Wait a moment to ensure system recognizes /etc/redhat-release
-  ansible.builtin.pause:
-    seconds: 3
-
-- name: Add PostgreSQL official repo RPM
-  ansible.builtin.yum:
-    name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-    state: present
-  become: true
-
-
-
-
-
-- name: Disable default PostgreSQL module
-  ansible.builtin.command:
-    cmd: dnf -qy module disable postgresql
-  become: true
-
-- name: Install PostgreSQL 14 server and client
-  ansible.builtin.yum:
-    name:
-      - postgresql14
-      - postgresql14-server
-    state: present
-  become: true
-
-- name: Initialize PostgreSQL 14 database
-  ansible.builtin.command:
-    cmd: /usr/pgsql-14/bin/postgresql-14-setup initdb
-  become: true
+    cmd: rpm -i --nodeps /tmp/pgdg-redhat-repo.rpm
   args:
-    creates: /var/lib/pgsql/14/data/PG_VERSION
+    creates: /etc/yum.repos.d/pgdg-redhat-all.repo
+  become: true
 
-- name: Remove dummy /etc/redhat-release file after repo installation
+- name: Remove dummy /etc/redhat-release
   ansible.builtin.file:
     path: /etc/redhat-release
     state: absent
-  become: true
-  
-- name: Enable and start PostgreSQL 14 service
-  ansible.builtin.systemd:
-    name: postgresql-14
-    enabled: yes
-    state: started
   become: true
