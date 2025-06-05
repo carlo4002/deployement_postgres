@@ -24,11 +24,7 @@
 
 
 
-- name: Remove dummy /etc/redhat-release file after repo installation
-  ansible.builtin.file:
-    path: /etc/redhat-release
-    state: absent
-  become: true
+
 
 - name: Disable default PostgreSQL module
   ansible.builtin.command:
@@ -50,6 +46,12 @@
   args:
     creates: /var/lib/pgsql/14/data/PG_VERSION
 
+- name: Remove dummy /etc/redhat-release file after repo installation
+  ansible.builtin.file:
+    path: /etc/redhat-release
+    state: absent
+  become: true
+  
 - name: Enable and start PostgreSQL 14 service
   ansible.builtin.systemd:
     name: postgresql-14
