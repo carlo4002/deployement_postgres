@@ -1,4 +1,4 @@
-# This playbook installs PostgreSQL 14 on a RHEL 8 system using the official PGDG repository.
+# This playbook installs PostgreSQL 15 on a RHEL 8 system using the official PGDG repository.
 ---
 
 - name: Ensure PostgreSQL service is started
