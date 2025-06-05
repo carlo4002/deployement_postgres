@@ -21,7 +21,7 @@
 - name: Copy etcd configuration template
   template:
     src: templates/etcd.conf.yml.j2
-    dest: "{{ etcd_config_path }}"
+    dest: "{{ etcd_config_path }}/etcd.conf.yml"
     owner: "{{ etcd_owner }}"
     group: "{{ etcd_group }}"
     mode: "{{ etcd_config_mode }}"
