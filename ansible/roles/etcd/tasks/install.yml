@@ -1,4 +1,12 @@
 ---
+- name: Install dependencies for building etcd
+  yum:
+    name:
+      - git
+      - golang
+      - make
+    state: present
+    
 - name: Clone etcd repository
   git:
     repo: https://github.com/etcd-io/etcd.git
