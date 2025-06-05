@@ -1,15 +1,14 @@
 ---
 
 - name: Install Patroni dependencies
-  apt:
+  dnf:
     name:
       - python3-pip
       - python3-dev
-      - libpq-dev
-      - postgresql-client
+      - postgresql-devel
     state: present
     update_cache: yes
-    
+
 - name: Install Patroni via pip
   pip:
     name: patroni

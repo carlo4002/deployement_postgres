@@ -1,9 +1,14 @@
 # This playbook installs PostgreSQL 15 on a RHEL 8 system using the official PGDG repository.
 ---
 
-- name: Ensure PostgreSQL service is started
+- name: Install PostgreSQL 15 on RHEL 8
   dnf:
     name: postgresql15-server.x86_64
+    state: present
+
+- name: Install PostgreSQL client
+  dnf:
+    name: postgresql15.x86_64
     state: present
 
 # Initialize the PostgreSQL database
