@@ -1,6 +1,6 @@
 ---
 - name: Install etcd
-  apt:
+  yum:
     name: etcd
     state: present
     update_cache: yes
