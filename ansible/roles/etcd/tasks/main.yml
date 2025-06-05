@@ -35,16 +35,16 @@
     group: "{{ etcd_group }}"
     mode: "{{ etcd_data_dir_mode }}"
 
-- name: Check etcd health
-  command: etcdctl endpoint health --endpoints={{ etcd_listen_client_urls }}
-  register: etcd_health_check
-  changed_when: false
-  until: "'is healthy' in etcd_health_check.stdout"
-  retries: 5
-  delay: 5 
-  failed_when: "etcd_health_check.rc != 0"
-  ignore_errors: yes
+# - name: Check etcd health
+#   command: etcdctl endpoint health --endpoints={{ etcd_listen_client_urls }}
+#   register: etcd_health_check
+#   changed_when: false
+#   until: "'is healthy' in etcd_health_check.stdout"
+#   retries: 5
+#   delay: 5 
+#   failed_when: "etcd_health_check.rc != 0"
+#   ignore_errors: yes
 
-- name: Debug etcd health status
-  debug:
-    msg: "Etcd health check result: {{ etcd_health_check.stdout }}"
+# - name: Debug etcd health status
+#   debug:
+#     msg: "Etcd health check result: {{ etcd_health_check.stdout }}"

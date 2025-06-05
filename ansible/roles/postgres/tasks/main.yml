@@ -1,6 +1,6 @@
 ---
 - name: Install PostgreSQL
-  apt:
+  dnf:
     name: postgresql
     state: present
     update_cache: yes
