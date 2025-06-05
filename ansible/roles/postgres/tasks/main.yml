@@ -1,7 +1,7 @@
 ---
 - name: Install PostgreSQL
   dnf:
-    name: postgresql
+    name: postgresql-server
     state: present
     update_cache: yes
 

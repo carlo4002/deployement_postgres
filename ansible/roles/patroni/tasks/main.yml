@@ -1,9 +1,8 @@
 ---
-- name: Install Patroni
-  apt:
+- name: Install Patroni via pip
+  pip:
     name: patroni
-    state: present
-    update_cache: yes
+    executable: pip3
 
 - name: Ensure Patroni service is started
   service:
