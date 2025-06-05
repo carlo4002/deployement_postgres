@@ -7,11 +7,23 @@
     mode: '0644'
   become: true
 
+- name: Sync filesystem to ensure /etc/redhat-release is written
+  ansible.builtin.command:
+    cmd: sync
+  become: true
+
+- name: Wait a moment to ensure system recognizes /etc/redhat-release
+  ansible.builtin.pause:
+    seconds: 3
+
 - name: Add PostgreSQL official repo RPM
   ansible.builtin.yum:
     name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     state: present
   become: true
+  args:
+    creates: /etc/yum.repos.d/pgdg-redhat-all.repo
+
 
 - name: Remove dummy /etc/redhat-release file after repo installation
   ansible.builtin.file:
