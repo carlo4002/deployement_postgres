@@ -1,0 +1,29 @@
+- name: Add PostgreSQL official repo
+  ansible.builtin.yum:
+    name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+    state: present
+
+- name: Disable default PostgreSQL module
+  ansible.builtin.command:
+    cmd: dnf -qy module disable postgresql
+  become: true
+
+- name: Install PostgreSQL 14 server and client
+  ansible.builtin.yum:
+    name:
+      - postgresql14
+      - postgresql14-server
+    state: present
+
+- name: Initialize PostgreSQL 14 database
+  ansible.builtin.command:
+    cmd: /usr/pgsql-14/bin/postgresql-14-setup initdb
+  become: true
+  args:
+    creates: /var/lib/pgsql/14/data/PG_VERSION
+
+- name: Enable and start PostgreSQL 14 service
+  ansible.builtin.systemd:
+    name: postgresql-14
+    enabled: yes
+    state: started
