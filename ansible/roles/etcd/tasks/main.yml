@@ -3,6 +3,14 @@
 - name: Install etcd
   include_tasks: install.yml
 
+- name: Ensure etcd configuration directory exists
+  file: 
+    path: "{{ etcd_config_path }}"
+    state: directory
+    owner: "{{ etcd_owner }}"
+    group: "{{ etcd_group }}"
+    mode: "{{ etcd_data_dir_mode }}"
+
 - name: Copy etcd configuration template
   template:
     src: templates/etcd.conf.yml.j2
