@@ -1,18 +1,23 @@
 ---
 
-- name: Create dummy /etc/redhat-release file for PGDG repo compatibility
+- name: Create dummy /etc/redhat-release file for PostgreSQL repo compatibility
   ansible.builtin.copy:
     dest: /etc/redhat-release
     content: "Red Hat Enterprise Linux release 8.0 (Ootpa)\n"
     mode: '0644'
   become: true
 
-- name: Add PostgreSQL official repo
+- name: Add PostgreSQL official repo RPM
   ansible.builtin.yum:
     name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     state: present
   become: true
 
+- name: Remove dummy /etc/redhat-release file after repo installation
+  ansible.builtin.file:
+    path: /etc/redhat-release
+    state: absent
+  become: true
 
 - name: Disable default PostgreSQL module
   ansible.builtin.command:
@@ -25,6 +30,7 @@
       - postgresql14
       - postgresql14-server
     state: present
+  become: true
 
 - name: Initialize PostgreSQL 14 database
   ansible.builtin.command:
@@ -38,3 +44,4 @@
     name: postgresql-14
     enabled: yes
     state: started
+  become: true
