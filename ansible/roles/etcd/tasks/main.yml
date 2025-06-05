@@ -3,6 +3,13 @@
 - name: Install etcd
   include_tasks: install.yml
 
+- name: Create etcd system user
+  user:
+    name: etcd
+    system: yes
+    shell: /sbin/nologin
+    create_home: no
+    
 - name: Ensure etcd configuration directory exists
   file: 
     path: "{{ etcd_config_path }}"
