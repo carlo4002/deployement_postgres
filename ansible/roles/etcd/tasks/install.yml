@@ -34,22 +34,7 @@
   ansible.builtin.copy:
     dest: /etc/systemd/system/etcd.service
     mode: '0644'
-    content: |
-      [Unit]
-      Description=etcd key-value store
-      Documentation=https://github.com/etcd-io/etcd
-      After=network.target
-
-      [Service]
-      ExecStart=/usr/local/bin/etcd --config-file={{etcd_config_file}}
-      Restart=always
-      RestartSec=5s
-      LimitNOFILE=40000
-      User=etcd
-      Group=etcd
-
-      [Install]
-      WantedBy=multi-user.target
+    content: "{{ etcd_service_content }}"
   become: true
 
 - name: Reload systemd daemon
