@@ -13,3 +13,11 @@
     owner: postgres
     group: postgres
     mode: '0700'
+
+- name: Install boto3 and botocore via pip
+  ansible.builtin.pip:
+    name:
+      - boto3
+      - botocore
+    executable: pip3
+  become: true
