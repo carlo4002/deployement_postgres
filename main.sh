@@ -104,3 +104,6 @@ echo "Generated Inventory:"
 echo "---"
 cat "${inventory_file}"
 echo "---"
+
+cd "${inventory_file}"
+ansible-playbook -i inventory.yml site.yml

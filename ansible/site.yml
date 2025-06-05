@@ -5,7 +5,7 @@
   gather_facts: true
   tasks:
     - name: Gather EC2 facts
-      amazon.aws.ec2_instance_facts:
+      amazon.aws.ec2_instance_info:
         region: "{{ aws_region }}"
       register: ec2_facts
 
