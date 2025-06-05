@@ -1,0 +1,45 @@
+---
+
+- name: Install Patroni dependencies
+  apt:
+    name:
+      - python3-pip
+      - python3-dev
+      - libpq-dev
+      - postgresql-client
+    state: present
+    update_cache: yes
+    
+- name: Install Patroni via pip
+  pip:
+    name: patroni
+    executable: pip3
+
+- name: Create systemd unit file for Patroni
+  copy:
+    dest: /etc/systemd/system/patroni.service
+    content: |
+      [Unit]
+      Description=Patroni PostgreSQL HA Cluster Node
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=postgres
+      ExecStart=/usr/local/bin/patroni /etc/patroni/config.yml
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+  become: true
+
+- name: Reload systemd
+  command: systemctl daemon-reexec
+  become: true
+
+- name: Enable and start Patroni service
+  systemd:
+    name: patroni
+    enabled: true
+    state: started
+  become: true

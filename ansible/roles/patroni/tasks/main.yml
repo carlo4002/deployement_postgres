@@ -1,8 +1,9 @@
 ---
-- name: Install Patroni via pip
-  pip:
-    name: patroni
-    executable: pip3
+
+
+- name: Install Patroni using pip
+  ansible.builtin.include_tasks:
+    file: install.yml
 
 - name: Ensure Patroni service is started
   service:
