@@ -8,8 +8,8 @@ patroni_etcd_host: >
   - "{{ item.ip }}:2379"
   {% endfor %}
 patroni_ttl: 30
-patroni_loop_wait: 10
-patroni_retry_timeout: 10
+patroni_loop_wait: 30
+patroni_retry_timeout: 20
 patroni_maximum_lag_on_failover: 1048576
 patroni_use_pg_rewind: true
 patroni_postgres_max_connections: 200
