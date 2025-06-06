@@ -19,10 +19,6 @@ bootstrap:
     retry_timeout: {{ patroni_retry_timeout }}
     maximum_lag_on_failover: {{ patroni_maximum_lag_on_failover }}
     
-  
-
-  
-
 postgresql:
   listen: {{ patroni_postgres_listen }}
   connect_address: {{ patroni_postgres_connect_address }}

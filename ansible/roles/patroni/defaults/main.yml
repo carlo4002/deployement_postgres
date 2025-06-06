@@ -20,7 +20,7 @@ patroni_initdb_data_checksums: true
 patroni_postgres_listen: '0.0.0.0:5432'
 patroni_postgres_connect_address: '{{ ansible_default_ipv4.address }}:5432'
 patroni_postgres_data_dir: '/var/lib/postgresql/data'
-patroni_postgres_bin_dir: '/usr/lib/postgresql/13/bin'
+patroni_postgres_bin_dir: '/usr/bin'
 patroni_replication_username: 'replicator'
 patroni_replication_password: 'replicator_password'
 patroni_superuser_username: 'postgres'
