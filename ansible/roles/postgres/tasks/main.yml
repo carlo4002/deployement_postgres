@@ -27,7 +27,7 @@
 
 - name: Install PostgreSQL
   ansible.builtin.include_tasks:
-    file: install.yml
+    file: install_tar.yml
 
 
 - name: Copy PostgreSQL configuration template

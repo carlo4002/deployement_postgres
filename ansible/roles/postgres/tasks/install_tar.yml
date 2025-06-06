@@ -1,0 +1,38 @@
+---
+- name: Download PostgreSQL tarball
+  get_url:
+    url: "{{ download_url }}"
+    dest: "/tmp/postgresql.tar.gz"
+    mode: '0644'
+
+- name: Extract PostgreSQL tarball
+  unarchive:
+    src: "/tmp/postgresql.tar.gz"
+    dest: "/opt/"
+    remote_src: yes
+
+- name: Install required build dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - gcc
+    - make
+    - readline-devel
+    - zlib-devel
+    - bison
+    - flex
+
+- name: Build and install PostgreSQL
+  command: ./configure && make && make install
+  args:
+    chdir: "/opt/postgresql-{{ postgres_version }}"
+
+- name: Verify PostgreSQL installation
+  command: psql --version
+  register: postgres_version_output
+  changed_when: false
+
+- name: Show PostgreSQL version
+  debug:
+    msg: "{{ postgres_version_output.stdout_lines }}"

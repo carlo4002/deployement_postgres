@@ -12,3 +12,5 @@ postgres_conf_directory: '/etc/postgresql/'
 postgres_log_filename: 'postgresql.log'
 postgres_user: 'postgres'
 postgres_group: 'postgres'
+
+download_url: 'https://ftp.postgresql.org/pub/source/v15.13/postgresql-15.13.tar.gz'
