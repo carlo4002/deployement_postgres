@@ -4,8 +4,8 @@ patroni_config_dir: '/etc/patroni'
 patroni_restapi_listen: '{{ ansible_ec2_local_ipv4 }}:8008'
 patroni_restapi_connect_address: '{{ ansible_ec2_local_ipv4 }}:8008'
 patroni_etcd_host: >
-  {% for ip in postgres_ips %}
-  - "{{ ip }}:2379"
+  {% for item in postgres_ips %}
+  - "{{ item.ip }}:2379"
   {% endfor %}
 patroni_ttl: 30
 patroni_loop_wait: 10
