@@ -38,7 +38,7 @@
     group: "{{ postgres_group }}"
     mode: '0644'
 
-- name: retart PostgreSQL service after installation
-  service:
-    name: postgresql
-    state: restarted
+# - name: retart PostgreSQL service after installation
+#   service:
+#     name: postgresql
+#     state: restarted
