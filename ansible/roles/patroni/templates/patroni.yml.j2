@@ -45,6 +45,7 @@ postgresql:
     - host all all 0.0.0.0/0 md5 # Allow all connections with md5 authentication
     - host replication replicator 10.12.0.0/16 md5 # Allow replication 
     - host replication replicator 10.11.0.0/16 md5 # Allow replication from a specific subnet
+    - host replication replicator 127.0.0.1/32 md5 # Allow replication from localhost
 
   initdb:
     - encoding: {{ patroni_initdb_encoding }}
