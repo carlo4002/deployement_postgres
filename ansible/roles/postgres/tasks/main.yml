@@ -25,6 +25,11 @@
 
 
 
+- name: Install PostgreSQL
+  ansible.builtin.include_tasks:
+    file: install.yml
+
+
 - name: Copy PostgreSQL configuration template
   template:
     src: templates/postgresql.conf.j2
@@ -33,14 +38,7 @@
     group: "{{ postgres_group }}"
     mode: '0644'
 
-
-- name: Install PostgreSQL
-  ansible.builtin.include_tasks:
-    file: install.yml
-
-
-
-- name: Stop PostgreSQL service after installation
+- name: retart PostgreSQL service after installation
   service:
     name: postgresql
-    state: stopped
+    state: restarted
