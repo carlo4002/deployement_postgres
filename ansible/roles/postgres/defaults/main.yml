@@ -1,7 +1,7 @@
 ---
 postgres_version: 13
 patroni_version: latest
-postgres_listen_addresses: '*'
+postgres_listen_addresses: '{{ ansible_default_ipv4.address }}'
 postgres_port: 5432
 postgres_max_connections: 200
 postgres_shared_buffers: '256MB'
