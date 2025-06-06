@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=postgres
 Group=postgres
-Environment="PATRONI_CONFIG_FILE=/etc/patroni.yml"
+Environment="PATRONI_CONFIG_FILE=/etc/patroni/patroni.yml"
 ExecStart=/usr/bin/patroni $PATRONI_CONFIG_FILE
 Restart=always
 LimitNOFILE=1024
