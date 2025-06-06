@@ -10,6 +10,10 @@
   dnf:
     name: postgresql15.x86_64
     state: present
+- name: Remove conflicting packages
+  dnf:
+    name: libpq-devel
+    state: absent
 
 - name: Install PostgreSQL additional packages
   dnf:
@@ -21,7 +25,7 @@
   - postgresql15-docs
   - postgresql15-libs
   - postgresql15-plpgsql
-  
+
 - name: Ensure PostgreSQL service is enabled and stopped
   service:
     name: postgresql
