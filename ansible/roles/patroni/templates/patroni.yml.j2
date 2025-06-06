@@ -6,8 +6,8 @@ restapi:
   listen: {{ patroni_restapi_listen }}
   connect_address: {{ patroni_restapi_connect_address }}
 
-etcd:
-  host: 
+etcd3:
+  hosts: 
   {% for item in postgres_ips %}
       - "{{ item.ip }}:2379"
   {% endfor %}
@@ -19,24 +19,9 @@ bootstrap:
     retry_timeout: {{ patroni_retry_timeout }}
     maximum_lag_on_failover: {{ patroni_maximum_lag_on_failover }}
     
-  pg_hba:
-    - host all all 0.0.0.0/0 md5 # Allow all connections with md5 authentication
-    - host replication replicator 10.12.0.0/16 md5 # Allow replication 
-    - host replication replicator 10.11.0.0/16 md5 # Allow replication from a specific subnet
+  
 
-  initdb:
-    - encoding: {{ patroni_initdb_encoding }}
-    - data-checksums: {{ patroni_initdb_data_checksums }}
-  users:
-    admin:
-      password: {{patroni_superuser_password}} # Patroni's superuser password
-      options:
-        - createrole
-        - createdb
-    replicator:
-      password: {{ patroni_replication_password }} # Password for replication user
-      options:
-        - replication
+  
 
 postgresql:
   listen: {{ patroni_postgres_listen }}
@@ -59,3 +44,22 @@ postgresql:
     effective_cache_size: 250MB # Adjust based on your server's RAM
     listen_addresses: {{ ansible_default_ipv4.address }}
     port: 5432
+  
+  pg_hba:
+    - host all all 0.0.0.0/0 md5 # Allow all connections with md5 authentication
+    - host replication replicator 10.12.0.0/16 md5 # Allow replication 
+    - host replication replicator 10.11.0.0/16 md5 # Allow replication from a specific subnet
+
+  initdb:
+    - encoding: {{ patroni_initdb_encoding }}
+    - data-checksums
+  users:
+    admin:
+      password: {{patroni_superuser_password}} # Patroni's superuser password
+      options:
+        - createrole
+        - createdb
+    replicator:
+      password: {{ patroni_replication_password }} # Password for replication user
+      options:
+        - replication
