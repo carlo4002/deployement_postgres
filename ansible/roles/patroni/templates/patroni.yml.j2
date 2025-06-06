@@ -7,7 +7,10 @@ restapi:
   connect_address: {{ patroni_restapi_connect_address }}
 
 etcd:
-  host: {{ patroni_etcd_host }}
+  host: 
+  {% for item in postgres_ips %}
+      - "{{ item.ip }}:2379"
+  {% endfor %}
 
 bootstrap:
   dcs:
