@@ -20,7 +20,7 @@
     mode: '0644'
 
 
-- name: Stop Patroni service after installation
-  service:
-    name: patroni
-    state: stopped
+# - name: Stop Patroni service after installation
+#   service:
+#     name: patroni
+#     state: stopped
