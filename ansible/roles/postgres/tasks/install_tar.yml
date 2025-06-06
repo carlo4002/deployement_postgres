@@ -11,22 +11,17 @@
     dest: "/opt/"
     remote_src: yes
 
-- name: Install required build dependencies
-  package:
-    name: "{{ item }}"
-    state: present
+- name: Move PostgreSQL binaries to /usr/local/bin
+  copy:
+    remote_src: yes
+    src: "/opt/postgresql-{{ postgres_version }}/src/bin/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: '0755'
   loop:
-    - gcc
-    - make
-    - readline-devel
-    - zlib-devel
-    - bison
-    - flex
-
-- name: Build and install PostgreSQL
-  command: ./configure && make && make install
-  args:
-    chdir: "/opt/postgresql-{{ postgres_version }}"
+    - initdb
+    - pg_ctl
+    - postgres
+    - psql
 
 - name: Verify PostgreSQL installation
   command: psql --version
