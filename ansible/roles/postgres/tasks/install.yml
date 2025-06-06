@@ -11,11 +11,17 @@
     name: postgresql15.x86_64
     state: present
 
-- name: Install PostgreSQL client
+- name: Install PostgreSQL additional packages
   dnf:
-    name: postgresql15-contrib postgresql15-devel postgresql15-docs postgresql15-libs 
-    state: present
-
+    # Refers to each item in the loop below
+    name: "{{item}}"
+  loop: 
+  - postgresql15-contrib
+  - postgresql15-devel
+  - postgresql15-docs
+  - postgresql15-libs
+  - postgresql15-plpgsql
+  
 - name: Ensure PostgreSQL service is enabled and stopped
   service:
     name: postgresql
