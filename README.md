@@ -1,4 +1,4 @@
-#Goal
+# Goal
 This code is intented to deploy a cluster postgres in aws using patroni and etcd in each node.
 This code will cover from:
   - OS preparation
