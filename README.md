@@ -24,6 +24,12 @@ Here is the flow that connects opentofu to the ansible playbooks that runs in ev
 
 Deployment occurs in parallel across all nodes. Each node runs the same code simultaneously, resulting in a randomly elected cluster leader. 
 
+There is a common role prepared for any OS changes or preparations, and it is the first role to start. The role order is:
+- common
+- etcd
+- postgres
+- patroni
+
 # Not intented to do
   - Infra deployment
   - Health verifications after installation
