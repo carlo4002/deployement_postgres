@@ -1,2 +1,4 @@
 inventory.yml
 ansible/inventory.yml
+.venv
+.vscode
