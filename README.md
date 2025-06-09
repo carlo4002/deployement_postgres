@@ -19,7 +19,7 @@ Once an instance is launched, AWS user data scripts dynamically generate the Ans
 Here is the flow that connects opentofu to the ansible playbooks that runs in every node
 
 <p align="center">
-<img src="https://github.com/carlo4002/deployement_postgres/blob/main/images/flow.png" alt="Architecture" width="600"/>
+<img src="https://github.com/carlo4002/deployement_postgres/blob/main/images/flow.png" alt="Architecture" width="900"/>
 </p>
 
 Deployment occurs in parallel across all nodes. Each node runs the same code simultaneously, resulting in a randomly elected cluster leader. 
