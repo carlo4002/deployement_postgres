@@ -36,6 +36,7 @@
     - Regularly update PostgreSQL to the latest version
     - Review and apply security patches
 
+9. Create another repository only for haproxy
 
 Important Notes:
 - Open port
